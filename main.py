@@ -1,29 +1,11 @@
 import csv
 import os
 
+
+CLIENT_SCHEMA = ['name', 'company', 'email', 'position']
 CLIENT_TABLE = '.clients.csv'
-CLIENT_SCHEMA = ['name','company','email','position']
 clients = []
 
-def _initialize_clients_from_storage():
-    with open(CLIENT_TABLE, mode='r') as f:
-        reader = csv.DictReader(f , fieldnames=CLIENT_SCHEMA)
-
-        for row in reader:
-            clients.append(row)
-
-
-def _save_clients_to_storage():
-    tmp_table_name = f'{CLIENT_TABLE}.tmp'
-    with open(tmp_table_name, mode='w', newline='') as f:
-        writer = csv.DictWriter(f, fieldnames=CLIENT_SCHEMA)
-        writer.writerows(clients)
-
-    # Reemplazar el archivo viejo por el nuevo
-    if os.path.exists(CLIENT_TABLE):
-        os.remove(CLIENT_TABLE)
-
-    os.rename(tmp_table_name, CLIENT_TABLE)
 
 def create_client(client):
     global clients
@@ -91,6 +73,24 @@ def _get_client_from_user():
     }
 
     return client
+
+
+def _initialize_clients_from_storage():
+    with open(CLIENT_TABLE, mode='r') as f:
+        reader = csv.DictReader(f, fieldnames=CLIENT_SCHEMA)
+
+        for row in reader:
+            clients.append(row)
+
+
+def _save_clients_to_storage():
+    tmp_table_name = '{}.tmp'.format(CLIENT_TABLE)
+    with open(tmp_table_name, mode='w') as f:
+        writer = csv.DictWriter(f, fieldnames=CLIENT_SCHEMA)
+        writer.writerows(clients)
+
+        os.remove(CLIENT_TABLE)
+        os.rename(tmp_table_name, CLIENT_TABLE)
 
 
 def _print_welcome():
